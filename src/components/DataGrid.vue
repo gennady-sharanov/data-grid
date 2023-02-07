@@ -46,7 +46,7 @@ const customDataSource = new CustomStore({
   key: 'Product_ID',
   loadMode: 'DataGrid',
   load: () => {
-    if (isLoadSuccess) return new Promise((r) => {r(result);});
+    if (isLoadSuccess) return Promise.resolve(result);
     isLoadSuccess = true;
     return getProducts(result);
   },
