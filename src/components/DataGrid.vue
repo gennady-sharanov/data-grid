@@ -1,61 +1,68 @@
 <template>
   <div class="container">
-    <DxDataGrid id="dataGrid"
-      :data-source="customDataSource"
+    <products-context-menu
+      :selected="selected"
+      :updateData="updateData"
+      :newValue="newValue"
+    />
+    <dx-data-grid
+      id="dataGrid"
+      @contextMenuPreparing="handleContextMenuPreparing"
+      @selection-changed="handleSeletionChange"
+      :data-source="dataSource"
     >
-      <DxEditing
+      <dx-selection
+        mode="multiple"
+      />
+      <dx-editing
         :allow-updating="true"
         :allow-editing="true"
         mode="cell"
       />
-      <DxColumn
-        data-field="Product_ID"
+      <dx-column
+        data-field="EmployeeID"
         caption="ID"
       >
-        <DxLookup
+        <dx-lookup
           :data-source="ids"
           value-expr="id"
           display-expr="value"
         />
-      </DxColumn>
-      <DxColumn
-        data-field="Product_Name"
-        caption="Product"
+      </dx-column>
+      <dx-column
+        data-field="ShipCountry"
+        caption="ShipCountry"
       >
-        <DxPatternRule
+        <dx-pattern-rule
           :pattern="pattern"
           message="Only latin characters without spaces"
         />
-      </DxColumn>
-      <DxColumn
-        data-field="Product_Cost"
-        caption="Cost"
+      </dx-column>
+      <dx-column
+        data-field="ShipVia"
+        caption="Ship Via"
       />
-    </DxDataGrid>
+      <dx-column
+        data-field="Freight"
+        caption="Freight"
+      />
+    </dx-data-grid>
   </div>
 </template>
 
 <script>
-import { DxColumn, DxDataGrid, DxEditing, DxLookup, DxPatternRule } from 'devextreme-vue/data-grid';
+import {
+  DxColumn,
+  DxDataGrid,
+  DxEditing,
+  DxLookup,
+  DxPatternRule,
+  DxSelection
+} from 'devextreme-vue/data-grid';
+import ProductsContextMenu from '@/components/ProductsContextMenu.vue';
 import CustomStore from 'devextreme/data/custom_store';
-import { getProducts } from '@/services/product.service';
-
-const result = [];
-let isLoadSuccess = false;
-const customDataSource = new CustomStore({
-  key: 'Product_ID',
-  loadMode: 'DataGrid',
-  load: () => {
-    if (isLoadSuccess) return Promise.resolve(result);
-    isLoadSuccess = true;
-    return getProducts(result);
-  },
-  update: (index, item) => {
-    for(let key in item) {
-      result[index - 1][key] = item[key];
-    }
-  }
-});
+import { getProducts, updateProducts } from '@/services/product.service';
+import DataSource from 'devextreme/data/data_source';
 
 export default {
   components: {
@@ -63,14 +70,49 @@ export default {
     DxEditing,
     DxColumn,
     DxLookup,
-    DxPatternRule
+    DxPatternRule,
+    DxSelection,
+    ProductsContextMenu,
   },
   data () {
     return {
-      customDataSource,
+      dataSource: new DataSource({
+        store: new CustomStore({
+          key: 'OrderID',
+          load: getProducts,
+          update: updateProducts,
+        }),
+      }),
       ids: this.$store.state.dataGrid.ids,
       pattern: /^([a-zA-Z]+)$/,
+      selected: [],
+      newValue: [],
     };
+  },
+  methods: {
+    handleContextMenuPreparing(e) {
+      if (e.target === 'content') {
+        this.newValue = [
+          e.row.data.ShipVia,
+          e.row.data.Freight
+        ];
+      }
+    },
+    handleSeletionChange(e) {
+      this.selected = e.component.getSelectedRowsData();
+    },
+    updateData(elements) {
+      // TODO:  не понятно как реализовать отправку данных через массив, поэтому так
+      elements.forEach(el => {
+        this.dataSource.store().update(
+          el.OrderID,
+          {
+            ShipVia: el.ShipVia,
+            Freight: el.Freight,
+          }
+        );
+      });
+    },
   },
 };
 </script>

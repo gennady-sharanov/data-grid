@@ -1,25 +1,36 @@
-export const getProducts = (result) => {
-  const handleErrors = (response) => {
-    if (!response.ok)
-      throw Error(response.statusText);
-    return response;
-  };
+const URL = 'https://js.devexpress.com/Demos/Mvc/api/DataGridWebApi';
 
-  return fetch('https://js.devexpress.com/Demos/DevAV/odata/Products')
-    .then(handleErrors)
-    .then(response => response.json())
-    .then(d => {
-      d.value.forEach(element => {
-        result.push({
-          'Product_ID': element.Product_ID,
-          'Product_Name': element.Product_Name.split('').filter(simbol => /^([a-zA-Z]+)$/.test(simbol)).join(''),
-          'Product_Cost': element.Product_Cost,
-          'Product_Description': '',
-        });
-      });
-      return result;
-    })
-    .catch((e) => {
-      throw 'Network error';
+const sendRequest = (url, method = 'GET', data = {}) => {
+  const params = Object.keys(data).map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`).join('&');
+  if (method === 'GET') {
+    return fetch(url, {
+      method,
+      credentials: 'include',
+    }).then((result) => result.json().then((json) => {
+      if (result.ok) return json.data;
+      throw json.Message;
+    }));
+  }
+  return fetch(url, {
+    method,
+    body: params,
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+    },
+    credentials: 'include',
+  }).then((result) => {
+    if (result.ok) {
+      return result.text().then((text) => text && JSON.parse(text));
+    }
+    return result.json().then((json) => {
+      throw json.Message;
     });
+  });
 };
+
+export const getProducts = () => sendRequest(`${URL}/Orders`);
+
+export const updateProducts = (key, values) => sendRequest(`${URL}/UpdateOrder`, 'PUT', {
+  key,
+  values: JSON.stringify(values),
+});

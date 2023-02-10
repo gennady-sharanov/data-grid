@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <DataGrid />
+    <data-grid />
   </div>
 </template>
 
