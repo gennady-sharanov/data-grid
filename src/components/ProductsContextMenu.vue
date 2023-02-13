@@ -85,9 +85,7 @@ export default {
     };
   },
   methods: {
-    closeOnOutsideClick() {
-      return false;
-    },
+    closeOnOutsideClick: () => false,
     handleDisagree() {
       this.isVisible = false;
     },

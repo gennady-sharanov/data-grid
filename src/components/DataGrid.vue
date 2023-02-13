@@ -76,11 +76,20 @@ export default {
   },
   data () {
     return {
+      result: null,
       dataSource: new DataSource({
         store: new CustomStore({
           key: 'OrderID',
-          load: getProducts,
-          update: updateProducts,
+          load: () => {
+            if (this.result) return Promise.resolve(this.result);
+            return getProducts().then(data => this.result = data);
+          },
+          update: (orderId, newValue) => {
+            const currentElemnt = this.result.find(el => el.OrderID === orderId);
+            for (const key in newValue) {
+              currentElemnt[key] = newValue[key];
+            }
+          },
         }),
       }),
       ids: this.$store.state.dataGrid.ids,
@@ -102,7 +111,6 @@ export default {
       this.selected = e.component.getSelectedRowsData();
     },
     updateData(elements) {
-      // TODO:  не понятно как реализовать отправку данных через массив, поэтому так
       elements.forEach(el => {
         this.dataSource.store().update(
           el.OrderID,
