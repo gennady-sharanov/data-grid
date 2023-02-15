@@ -105,7 +105,7 @@ export default {
       e.event.stopPropagation();
       this.menuItems[index].isSelect = !this.menuItems[index].isSelect;
     },
-  },
+  }
 };
 </script>
 
