@@ -30,5 +30,8 @@ export const getIDs = () => {
 export default {
   state:{
     ids: getIDs(),
+  },
+  getters: {
+    ids: (state) => state.ids,
   }
 };

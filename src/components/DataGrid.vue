@@ -126,7 +126,7 @@ export default {
           }
         }),
       }),
-      ids: this.$store.state.dataGrid.ids,
+      ids: this.$store.getters.ids,
       pattern: /^([a-zA-Z]+)$/,
       selected: [],
       newValue: [],

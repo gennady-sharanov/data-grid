@@ -1,6 +1,7 @@
 import * as sinon from 'sinon';
 import { mount, createLocalVue } from '@vue/test-utils';
 import DataGrid from '@/components/DataGrid.vue';
+import ReloadButton from '@/components/ReloadButton.vue';
 import Vuex from 'vuex';
 import store from '@/store';
 import mockProduckData from '@/services/mockProduckData';
@@ -11,7 +12,7 @@ const localVue = createLocalVue();
 localVue.use(Vuex);
 
 describe('data grid', function() {
-  let fakeXml, requests = [], clock, wrapper;
+  let fakeXml, requests = [], clock, wrapper, result;
 
   beforeEach(() => {
     fakeXml = sinon.useFakeXMLHttpRequest();
@@ -39,8 +40,15 @@ describe('data grid', function() {
     expect(wrapper.vm.result[0].ShipVia).toBe(2);
   });
 
-  it('test load data', async () => {
-    const result = await wrapper.vm.dataSource.store().load()
+  it('load/reload data', async () => {
+    result = await wrapper.vm.dataSource.store().load()
     expect(result[0]).toEqual(wrapper.vm.result[0])
-  }, 3000);
+
+    wrapper.vm.result = null;
+    const reloadButton = wrapper.findComponent({ name: 'reload-button'})
+    expect(reloadButton.is(ReloadButton)).toBeTruthy()
+    reloadButton.vm.handleRealoadData();
+    await clock.tickAsync(2000);
+    expect(result[0]).toEqual(wrapper.vm.result[0])
+  }, 5000);
 });

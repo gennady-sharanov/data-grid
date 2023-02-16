@@ -7,6 +7,7 @@
 <script>
 import { DxButton } from 'devextreme-vue';
 export default {
+  name: 'reload-button',
   components: { DxButton },
   props: {
     refs: null,
