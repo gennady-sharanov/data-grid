@@ -1,16 +1,16 @@
 <template>
   <div class="home">
-    <data-grid />
+    <table-template />
   </div>
 </template>
 
 <script>
-import DataGrid from '@/components/DataGrid.vue';
+import TableTemplate from '@/components/TableTemplate.vue';
 
 export default {
   name: 'HomePage',
   components: {
-    DataGrid
+    TableTemplate
   },
 };
 </script>

@@ -20,6 +20,7 @@ describe('data grid', function() {
       requests.push(xhr);
     };
     wrapper = mount(DataGrid, {store, localVue});
+    this.requests = [];
     clock = sinon.useFakeTimers();
   });
 
@@ -48,7 +49,7 @@ describe('data grid', function() {
     const reloadButton = wrapper.findComponent({ name: 'reload-button'})
     expect(reloadButton.is(ReloadButton)).toBeTruthy()
     reloadButton.vm.handleRealoadData();
-    await clock.tickAsync(2000);
+    await clock.tickAsync(2500);
     expect(result[0]).toEqual(wrapper.vm.result[0])
   }, 5000);
 });

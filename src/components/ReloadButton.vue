@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <dx-button type="default" text="Reloading data" @click="handleRealoadData"/>
-  </div>
+  <dx-button type="default" text="Reloading data" @click="handleReload"/>
 </template>
 
 <script>
@@ -10,17 +8,10 @@ export default {
   name: 'reload-button',
   components: { DxButton },
   props: {
-    refs: null,
-    setReloadData: {
+    handleReload: {
       type: Function,
       requared: true,
     },
   },
-  methods: {
-    handleRealoadData() {
-      this.setReloadData();
-      this.refs.dataGrid.dataSource.reload();
-    }
-  }
 };
 </script>

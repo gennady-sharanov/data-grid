@@ -1,78 +1,70 @@
 <template>
-  <div class="container">
-    <products-context-menu
-      :selected="selected"
-      :update-data="updateData"
-      :new-value="newValue"
+  <dx-data-grid
+    id="dataGrid"
+    @context-menu-preparing="handleContextMenuPreparing"
+    @selection-changed="handleSeletionChange"
+    :data-source="dataSource"
+    ref="dataGrid"
+  >
+    <dx-selection
+      mode="multiple"
     />
-    <dx-data-grid
-      id="dataGrid"
-      @context-menu-preparing="handleContextMenuPreparing"
-      @selection-changed="handleSeletionChange"
-      :data-source="dataSource"
-      ref="dataGrid"
+    <dx-column
+      data-field="EmployeeID"
+      caption="ID"
     >
-      <dx-selection
-        mode="multiple"
+      <dx-lookup
+        :data-source="ids"
+        value-expr="id"
+        display-expr="value"
       />
-      <dx-column
-        data-field="EmployeeID"
-        caption="ID"
-      >
-        <dx-lookup
-          :data-source="ids"
-          value-expr="id"
-          display-expr="value"
-        />
-      </dx-column>
-      <dx-column
-        data-field="ShipCountry"
-        caption="ShipCountry"
-      >
-        <dx-pattern-rule
-          :pattern="pattern"
-          message="Only latin characters without spaces"
-        />
-      </dx-column>
-      <dx-column
-        data-field="ShipVia"
-        caption="Ship Via"
+    </dx-column>
+    <dx-column
+      data-field="ShipCountry"
+      caption="ShipCountry"
+    >
+      <dx-pattern-rule
+        :pattern="pattern"
+        message="Only latin characters without spaces"
       />
-      <dx-column
-        data-field="Freight"
-        caption="Freight"
+    </dx-column>
+    <dx-column
+      data-field="ShipVia"
+      caption="Ship Via"
+    />
+    <dx-column
+      data-field="Freight"
+      caption="Freight"
+    />
+    <dx-editing
+      :allow-updating="true"
+      :allow-editing="true"
+      :allow-deleting="true"
+      mode="row"
+      :use-icons="true"
+    />
+    <dx-column
+      type="buttons"
+      :width="80"
+      ref="editColumn"
+      css-class="editing-visible"
+    >
+      <dx-button
+        name="edit"
       />
-      <dx-editing
-        :allow-updating="true"
-        :allow-editing="true"
-        :allow-deleting="true"
-        mode="row"
-        :use-icons="true"
+      <dx-button
+        name="delete"
       />
-      <dx-column
-        type="buttons"
-        :width="80"
-        ref="editColumn"
-        css-class="editing-visible"
-      >
-        <dx-button
-          name="edit"
-        />
-        <dx-button
-          name="delete"
-        />
-        <dx-button
-          :visible="false"
-          name="save"
-        />
-        <dx-button
-          :visible="false"
-          name="cancel"
-        />
-      </dx-column>
-    </dx-data-grid>
-    <reload-button class="save-button" :refs="this.$refs" :set-reload-data="setReloadData"/>
-  </div>
+      <dx-button
+        :visible="false"
+        name="save"
+      />
+      <dx-button
+        :visible="false"
+        name="cancel"
+      />
+    </dx-column>
+  </dx-data-grid>
 </template>
 
 <script>
@@ -85,11 +77,9 @@ import {
   DxSelection,
   DxButton
 } from 'devextreme-vue/data-grid';
-import ProductsContextMenu from '@/components/ProductsContextMenu.vue';
 import CustomStore from 'devextreme/data/custom_store';
-import { getProducts, updateProducts } from '@/services/product.service';
+import { getProducts } from '@/services/product.service';
 import DataSource from 'devextreme/data/data_source';
-import ReloadButton from './ReloadButton.vue';
 
 export default {
   components: {
@@ -99,9 +89,21 @@ export default {
     DxLookup,
     DxPatternRule,
     DxSelection,
-    ProductsContextMenu,
-    ReloadButton,
     DxButton,
+  },
+  props: {
+    selected: {
+      type: Array,
+      requared: true,
+    },
+    setSelected: {
+      type: Function,
+      requared: true,
+    },
+    setNewValue: {
+      type: Function,
+      requared: true,
+    },
   },
   data () {
     return {
@@ -128,8 +130,6 @@ export default {
       }),
       ids: this.$store.getters.ids,
       pattern: /^([a-zA-Z]+)$/,
-      selected: [],
-      newValue: [],
       isReloadData: false,
     };
   },
@@ -137,14 +137,14 @@ export default {
     handleContextMenuPreparing(e) {
       if (!this.selected.length) e.event.stopPropagation();
       if (e.target === 'content') {
-        this.newValue = [
+        this.setNewValue([
           e.row.data.ShipVia,
           e.row.data.Freight
-        ];
+        ]);
       }
     },
     handleSeletionChange(e) {
-      this.selected = e.component.getSelectedRowsData();
+      this.setSelected(e.component.getSelectedRowsData());
     },
     updateData(elements) {
       elements.forEach(el => {
@@ -157,27 +157,17 @@ export default {
         );
       });
     },
-    setReloadData() {
+    relodData() {
       this.isReloadData = true;
+      this.dataSource.reload();
     }
   },
 };
 </script>
 
 <style scoped>
-.container {
-  margin: 20px;
-  padding: 5px 5px 10px;
-  border: 2px solid #eee;
-}
-
 #dataGrid {
   height: 500px;
-}
-
-.save-button {
-  display: flex;
-  justify-content: flex-end;
 }
 </style>
 

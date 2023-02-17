@@ -29,8 +29,3 @@ const sendRequest = (url, method = 'GET', data = {}) => {
 };
 
 export const getProducts = () => sendRequest(`${URL}/Orders`);
-
-export const updateProducts = (key, values) => sendRequest(`${URL}/UpdateOrder`, 'PUT', {
-  key,
-  values: JSON.stringify(values),
-});
