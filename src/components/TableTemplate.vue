@@ -16,9 +16,7 @@
 </template>
 
 <script>
-import DataGrid from '@/components/DataGrid.vue';
-import ReloadButton from '@/components/ReloadButton.vue';
-import ProductsContextMenu from '@/components/ProductsContextMenu.vue';
+import { DataGrid, ReloadButton, ProductsContextMenu } from '@/components';
 
 export default {
   name: 'TableTemplate',
@@ -52,7 +50,6 @@ export default {
 
 <style scoped>
 .container {
-  margin: 20px;
   padding: 5px 5px 10px;
   border: 2px solid #eee;
 

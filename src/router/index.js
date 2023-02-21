@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import HomePage from '@/pages/HomePage.vue';
+import ElementsPage from '@/pages/ElementsPage.vue';
 
 Vue.use(VueRouter);
 
@@ -8,7 +9,12 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomePage
+    component: HomePage,
+  },
+  {
+    path: '/elements',
+    name: 'elements',
+    component: ElementsPage,
   },
 ];
 

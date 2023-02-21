@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import TableTemplate from '@/components/TableTemplate.vue';
+import { TableTemplate } from '@/components';
 
 export default {
   name: 'HomePage',
