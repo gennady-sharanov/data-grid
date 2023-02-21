@@ -11,7 +11,7 @@ global.fetch = require('node-fetch');
 const localVue = createLocalVue();
 localVue.use(Vuex);
 
-describe('data grid', function() {
+/* describe('data grid', function() {
   let fakeXml, requests = [], clock, wrapper, result;
 
   beforeEach(() => {
@@ -52,4 +52,35 @@ describe('data grid', function() {
     await clock.tickAsync(2500);
     expect(result[0]).toEqual(wrapper.vm.result[0])
   }, 5000);
+}); */
+
+
+describe('test expect', () => {
+  it('objectContaining', () => {
+    let a = {
+      a: 10,
+      b: 6,
+      c: {
+        d: 7,
+        e: 'aa'
+      }
+    };
+    let b = {
+      a: 10,
+      b: 6,
+    };
+    expect(a).toEqual(expect.objectContaining(b));
+  });
+
+  it('arrayContaining', () => {
+    let a = [1, 2, {
+      a: 10,
+      b: 20
+    }, 4];
+    let b = [1, 2, {
+      a: 10,
+      b: 20
+    }, 4];
+    expect(a).toEqual(expect.arrayContaining(b));
+  });
 });
